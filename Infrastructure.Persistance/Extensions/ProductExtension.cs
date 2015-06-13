@@ -5,9 +5,9 @@ namespace Infrastructure.Persistance.Extensions
 {
    public static class ProductExtension
    {
-      public static Product GetByName(this IRepository<Product> a_products, string a_name)
+      public static Product GetByName(this IRepository<Product> products, string name)
       {
-         return a_products.Retrieve(a_p => a_p.Name.ToLower() == a_name.ToLower())
+         return products.Retrieve(p => p.Name.ToLower() == name.ToLower())
                                             .FirstOrDefault();
       }
    }

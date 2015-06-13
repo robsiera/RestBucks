@@ -13,12 +13,12 @@ namespace Domain
             Quantity = 1;
         }
 
-        public OrderItem(Product a_product, int a_quantity, decimal a_unitPrice, IDictionary<string, string> a_preferences)
+        public OrderItem(Product product, int quantity, decimal unitPrice, IDictionary<string, string> preferences)
         {
-            Product = a_product;
-            Quantity = a_quantity;
-            UnitPrice = a_unitPrice;
-            Preferences = a_preferences;
+            Product = product;
+            Quantity = quantity;
+            UnitPrice = unitPrice;
+            Preferences = preferences;
         }
 
         public virtual Product Product { get; set; }
@@ -34,7 +34,7 @@ namespace Domain
             {
                 foreach (var preference in Preferences)
                 {
-                    if(!Product.Customizations.Any(a_c => a_c.Name.ToLower() == preference.Key.ToLower() && a_c.PossibleValues.Contains(preference.Value, StringComparer.CurrentCultureIgnoreCase)))
+                    if(!Product.Customizations.Any(c => c.Name.ToLower() == preference.Key.ToLower() && c.PossibleValues.Contains(preference.Value, StringComparer.CurrentCultureIgnoreCase)))
                     {
                         yield return string.Format("The product {0} does not have a customization: {1}/{2}.", 
                                                     Product.Name, 

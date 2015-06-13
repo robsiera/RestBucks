@@ -9,7 +9,7 @@
 (function ($) {
     var $jQval = $.validator,
         adapters,
-        data_validation = "unobtrusiveValidation";
+        datvalidation = "unobtrusiveValidation";
 
     function setValidationValues(options, ruleName, value) {
         options.rules[ruleName] = value;
@@ -98,7 +98,7 @@
 
     function validationInfo(form) {
         var $form = $(form),
-            result = $form.data(data_validation),
+            result = $form.data(datvalidation),
             onResetProxy = $.proxy(onReset, form);
 
         if (!result) {
@@ -114,8 +114,8 @@
                 },
                 attachValidation: function () {
                     $form
-                        .unbind("reset." + data_validation, onResetProxy)
-                        .bind("reset." + data_validation, onResetProxy)
+                        .unbind("reset." + datvalidation, onResetProxy)
+                        .bind("reset." + datvalidation, onResetProxy)
                         .validate(this.options);
                 },
                 validate: function () {  // a validation function that is called by unobtrusive Ajax
@@ -123,7 +123,7 @@
                     return $form.valid();
                 }
             };
-            $form.data(data_validation, result);
+            $form.data(datvalidation, result);
         }
 
         return result;

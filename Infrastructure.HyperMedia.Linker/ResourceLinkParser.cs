@@ -30,24 +30,24 @@ namespace Infrastructure.HyperMedia.Linker
     /// </remarks>
     public class ResourceLinkParser : IResourceLinkParser, IActionVerifier
     {
-        private readonly IHttpActionSelector m_actionSelector;
-        private readonly HttpConfiguration m_configuration;
-        private readonly IHttpControllerSelector m_controllerSelector;
+        private readonly IHttpActionSelector _actionSelector;
+        private readonly HttpConfiguration _configuration;
+        private readonly IHttpControllerSelector _controllerSelector;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ResourceLinkParser"/> class.
         /// </summary>
-        /// <param name="a_configuration">
+        /// <param name="configuration">
         /// The configuration to use to parse the URIs.
         /// </param>
-        public ResourceLinkParser(HttpConfiguration a_configuration)
+        public ResourceLinkParser(HttpConfiguration configuration)
         {
-            if (a_configuration == null)
-                throw new ArgumentNullException("a_configuration");
+            if (configuration == null)
+                throw new ArgumentNullException("configuration");
 
-            m_configuration = a_configuration;
-            m_actionSelector = m_configuration.Services.GetActionSelector();
-            m_controllerSelector = m_configuration.Services.GetHttpControllerSelector();
+            _configuration = configuration;
+            _actionSelector = _configuration.Services.GetActionSelector();
+            _controllerSelector = _configuration.Services.GetHttpControllerSelector();
         }
 
         /// <summary>
@@ -55,23 +55,23 @@ namespace Infrastructure.HyperMedia.Linker
         /// </summary>
         public HttpConfiguration Configuration
         {
-            get { return m_configuration; }
+            get { return _configuration; }
         }
 
         /// <summary>
         /// Parses the specified URI.
         /// </summary>
-        /// <param name="a_uri">
+        /// <param name="uri">
         /// The URI to parse.
         /// </param>
         /// <returns>
         /// The <see cref="HttpActionContext"/> with bound parameter values.
         /// </returns>
         /// <exception cref="System.ArgumentException">The URI is invalid or no action matches the specified URI.</exception>
-        public HttpActionContext Parse(Uri a_uri)
+        public HttpActionContext Parse(Uri uri)
         {
             HttpActionContext result;
-            if (TryParse(a_uri, out result))
+            if (TryParse(uri, out result))
                 return result;
 
             throw new ArgumentException("The URI is invalid or no action matches the specified URI");
@@ -80,20 +80,20 @@ namespace Infrastructure.HyperMedia.Linker
         /// <summary>
         /// Tries to parse the specified URI.
         /// </summary>
-        /// <param name="a_uri">
+        /// <param name="uri">
         /// The URI to parse.
         /// </param>
-        /// <param name="a_actionContext">
+        /// <param name="actionContext">
         /// The <see cref="HttpActionContext"/> with bound parameter values.
         /// </param>
         /// <returns>
         ///     <c>true</c> in case the URI could be parsed successfully and matched to an action; otherwise, <c>false</c> .
         /// </returns>
-        public bool TryParse(Uri a_uri, out HttpActionContext a_actionContext)
+        public bool TryParse(Uri uri, out HttpActionContext actionContext)
         {
-            a_actionContext = null;
+            actionContext = null;
 
-            var controllerContext = GetControllerContext(a_uri);
+            var controllerContext = GetControllerContext(uri);
             if (controllerContext == null)
                 return false;
 
@@ -101,8 +101,8 @@ namespace Infrastructure.HyperMedia.Linker
             if (actionDescriptor == null)
                 return false;
 
-            a_actionContext = new HttpActionContext(controllerContext, actionDescriptor);
-            actionDescriptor.ActionBinding.ExecuteBindingAsync(a_actionContext, CancellationToken.None).Wait();
+            actionContext = new HttpActionContext(controllerContext, actionDescriptor);
+            actionDescriptor.ActionBinding.ExecuteBindingAsync(actionContext, CancellationToken.None).Wait();
 
             return true;
         }
@@ -113,29 +113,29 @@ namespace Infrastructure.HyperMedia.Linker
         /// <typeparam name="TController">
         /// The type of the controller.
         /// </typeparam>
-        /// <param name="a_actionContext">
+        /// <param name="actionContext">
         /// The action context to verify.
         /// </param>
-        /// <param name="a_expectedAction">
+        /// <param name="expectedAction">
         /// The expression defining the expected action.
         /// </param>
         /// <returns>
         ///     <c>true</c> if the specified action context refers to the same controller action as the supplied expression; otherwise, <c>false</c> .
         /// </returns>
-        public bool Verify<TController>(HttpActionContext a_actionContext, Expression<Action<TController>> a_expectedAction)
+        public bool Verify<TController>(HttpActionContext actionContext, Expression<Action<TController>> expectedAction)
         {
-            if (a_actionContext == null)
-                throw new ArgumentNullException("a_actionContext");
-            if (a_expectedAction == null)
-                throw new ArgumentNullException("a_expectedAction");
+            if (actionContext == null)
+                throw new ArgumentNullException("actionContext");
+            if (expectedAction == null)
+                throw new ArgumentNullException("expectedAction");
 
-            if (typeof(TController) != a_actionContext.ControllerContext.ControllerDescriptor.ControllerType)
+            if (typeof(TController) != actionContext.ControllerContext.ControllerDescriptor.ControllerType)
                 return false;
 
-            var expectedActionMethod = a_expectedAction.GetMethodInfo();
+            var expectedActionMethod = expectedAction.GetMethodInfo();
 
-           var actionDescriptor = a_actionContext.ActionDescriptor as ReflectedHttpActionDescriptor;
-            MethodInfo actualActionMethod = actionDescriptor == null ? GetActionMethod(a_actionContext.ActionDescriptor) : actionDescriptor.MethodInfo;
+           var actionDescriptor = actionContext.ActionDescriptor as ReflectedHttpActionDescriptor;
+            MethodInfo actualActionMethod = actionDescriptor == null ? GetActionMethod(actionContext.ActionDescriptor) : actionDescriptor.MethodInfo;
 
             return actualActionMethod.RefersToTheSameMethodAs(expectedActionMethod);
         }
@@ -143,40 +143,40 @@ namespace Infrastructure.HyperMedia.Linker
         /// <summary>
         /// Gets the <see cref="MethodInfo"/> object the supplied <see cref="HttpActionDescriptor"/> describes.
         /// </summary>
-        /// <param name="a_actionDescriptor">
+        /// <param name="actionDescriptor">
         /// The action descriptor.
         /// </param>
         /// <returns>
         /// The <see cref="MethodInfo"/> object the supplied <see cref="HttpActionDescriptor"/> describes or <c>null</c> if no matching method is found.
         /// </returns>
-        private static MethodInfo GetActionMethod(HttpActionDescriptor a_actionDescriptor)
+        private static MethodInfo GetActionMethod(HttpActionDescriptor actionDescriptor)
         {
             var actionParameters =
-                a_actionDescriptor.ActionBinding.ParameterBindings.Select(a_x => new { Name = a_x.Descriptor.ParameterName, a_x.Descriptor.ParameterType })
-                                .OrderBy(a_x => a_x.Name);
+                actionDescriptor.ActionBinding.ParameterBindings.Select(x => new { Name = x.Descriptor.ParameterName, x.Descriptor.ParameterType })
+                                .OrderBy(x => x.Name);
 
             return
-                a_actionDescriptor.ControllerDescriptor.ControllerType.GetMethods()
-                                .Where(a_x => a_x.Name == a_actionDescriptor.ActionName)
+                actionDescriptor.ControllerDescriptor.ControllerType.GetMethods()
+                                .Where(x => x.Name == actionDescriptor.ActionName)
                                 .SingleOrDefault(
-                                    a_x => a_x.GetParameters().Select(a_y => new { a_y.Name, a_y.ParameterType }).OrderBy(a_y => a_y.Name).SequenceEqual(actionParameters));
+                                    x => x.GetParameters().Select(y => new { y.Name, y.ParameterType }).OrderBy(y => y.Name).SequenceEqual(actionParameters));
         }
 
         /// <summary>
         /// Gets the name of the controller for the supplied route data.
         /// </summary>
-        /// <param name="a_routeData">
+        /// <param name="routeData">
         /// The route data.
         /// </param>
         /// <returns>
         /// The name of the controller or <c>null</c> if the route data doesn't contain the name of the controller.
         /// </returns>
-        private static string GetControllerName(IHttpRouteData a_routeData)
+        private static string GetControllerName(IHttpRouteData routeData)
         {
-            if (a_routeData == null)
-                throw new ArgumentNullException("a_routeData");
+            if (routeData == null)
+                throw new ArgumentNullException("routeData");
             object tmp;
-            if (a_routeData.Values.TryGetValue("controller", out tmp))
+            if (routeData.Values.TryGetValue("controller", out tmp))
                 return (string)tmp;
 
             return null;
@@ -185,17 +185,17 @@ namespace Infrastructure.HyperMedia.Linker
         /// <summary>
         /// Gets the action descriptor.
         /// </summary>
-        /// <param name="a_controllerContext">
+        /// <param name="controllerContext">
         /// The controller context.
         /// </param>
         /// <returns>
         /// The action descriptor for the controller context.
         /// </returns>
-        private HttpActionDescriptor GetActionDescriptor(HttpControllerContext a_controllerContext)
+        private HttpActionDescriptor GetActionDescriptor(HttpControllerContext controllerContext)
         {
             try
             {
-                return m_actionSelector.SelectAction(a_controllerContext);
+                return _actionSelector.SelectAction(controllerContext);
             }
             catch (InvalidOperationException)
             {
@@ -206,15 +206,15 @@ namespace Infrastructure.HyperMedia.Linker
         /// <summary>
         /// Gets the <see cref="HttpControllerContext"/> for the supplied <see cref="Uri"/>.
         /// </summary>
-        /// <param name="a_uri">
+        /// <param name="uri">
         /// The URI.
         /// </param>
         /// <returns>
         /// The <see cref="HttpControllerContext"/> instance for the supplier URI.
         /// </returns>
-        private HttpControllerContext GetControllerContext(Uri a_uri)
+        private HttpControllerContext GetControllerContext(Uri uri)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, a_uri))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
             {
                 var routeData = Configuration.Routes.GetRouteData(request);
                 if (routeData == null)
@@ -227,10 +227,10 @@ namespace Infrastructure.HyperMedia.Linker
 
                 var controllerName = GetControllerName(routeData);
 
-                if (!m_controllerSelector.GetControllerMapping().ContainsKey(controllerName))
+                if (!_controllerSelector.GetControllerMapping().ContainsKey(controllerName))
                     return null;
 
-                controllerContext.ControllerDescriptor = m_controllerSelector.SelectController(request);
+                controllerContext.ControllerDescriptor = _controllerSelector.SelectController(request);
                 return controllerContext;
             }
         }

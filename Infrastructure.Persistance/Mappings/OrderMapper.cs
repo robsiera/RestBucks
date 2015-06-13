@@ -7,15 +7,15 @@ namespace Infrastructure.Persistance.Mappings
    {
       public OrderMapper()
       {
-         Id(a_x => a_x.Id);
-         Version(a_x => a_x.Version);
-         HasMany(a_x => a_x.Items).AsSet().Cascade.All().Access.CamelCaseField(Prefix.Underscore);
-         References(a_x => a_x.Payment).Cascade.All().Access.BackingField();
-         Map(a_x => a_x.Total).Access.ReadOnly();
-         Map(a_x => a_x.Status).CustomType<int>();
-         Map(a_x => a_x.Location).CustomType<int>();
-         Map(a_x => a_x.CancelReason).Access.ReadOnly();
-         Map(a_x => a_x.Date);
+         Id(x => x.Id);
+         Version(x => x.Version);
+         HasMany(x => x.Items).AsSet().Cascade.All().Access.CamelCaseField(Prefix.Underscore);
+         References(x => x.Payment).Cascade.All().Access.BackingField();
+         Map(x => x.Total).Access.ReadOnly();
+         Map(x => x.Status).CustomType<int>();
+         Map(x => x.Location).CustomType<int>();
+         Map(x => x.CancelReason).Access.ReadOnly();
+         Map(x => x.Date);
       }
    }
 }

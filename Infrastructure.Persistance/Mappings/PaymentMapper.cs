@@ -7,10 +7,10 @@ namespace Infrastructure.Persistance.Mappings
    {
       public PaymentMapper()
       {
-         Id(a_x => a_x.Id);
-         Version(a_x => a_x.Version);
-         Map(a_x => a_x.CardOwner);
-         Map(a_x => a_x.CreditCardNumber);
+         Id(x => x.Id);
+         Version(x => x.Version);
+         Map(x => x.CardOwner);
+         Map(x => x.CreditCardNumber);
       }
    }
 }

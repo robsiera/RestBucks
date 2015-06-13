@@ -15,15 +15,15 @@ namespace Infrastructure.HyperMedia.Linker.Interfaces
         /// <typeparam name="TController">
         /// The type of the controller.
         /// </typeparam>
-        /// <param name="a_actionContext">
+        /// <param name="actionContext">
         /// The action context to verify.
         /// </param>
-        /// <param name="a_expectedAction">
+        /// <param name="expectedAction">
         /// The expression defining the expected action.
         /// </param>
         /// <returns>
         ///     <c>true</c> if the specified action context refers to the same controller action as the supplied expression; otherwise, <c>false</c> .
         /// </returns>
-        bool Verify<TController>(HttpActionContext a_actionContext, Expression<Action<TController>> a_expectedAction);
+        bool Verify<TController>(HttpActionContext actionContext, Expression<Action<TController>> expectedAction);
     }
 }

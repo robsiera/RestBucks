@@ -12,7 +12,7 @@ namespace Infrastructure.HyperMedia.Linker
     /// <seealso cref="IRouteDispatcher" />
     public class DefaultRouteDispatcher : IRouteDispatcher
     {
-        private readonly string m_routeName;
+        private readonly string _routeName;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultRouteDispatcher" /> class.
@@ -27,30 +27,30 @@ namespace Infrastructure.HyperMedia.Linker
         /// <see cref="DefaultRouteDispatcher" /> class with the supplied route
         /// name.
         /// </summary>
-        /// <param name="a_routeName">
+        /// <param name="routeName">
         /// The route name which will be used by the
         /// <see cref="Dispatch(MethodCallExpression, IDictionary{string, object})" />
         /// method as the <see cref="Rouple.RouteName" /> value.
         /// </param>
         /// <remarks>
         /// <para>
-        /// After initialization, the <paramref name="a_routeName" /> value is
+        /// After initialization, the <paramref name="routeName" /> value is
         /// available through the <see cref="RouteName" /> property.
         /// </para>
         /// </remarks>
-        public DefaultRouteDispatcher(string a_routeName)
+        public DefaultRouteDispatcher(string routeName)
         {
-            if (a_routeName == null)
-                throw new ArgumentNullException("a_routeName");
+            if (routeName == null)
+                throw new ArgumentNullException("routeName");
 
-            m_routeName = a_routeName;
+            _routeName = routeName;
         }
 
         /// <summary>
         /// Provides dispatch information based on an Action Method.
         /// </summary>
-        /// <param name="a_method">The method expression.</param>
-        /// <param name="a_routeValues">Route values.</param>
+        /// <param name="method">The method expression.</param>
+        /// <param name="routeValues">Route values.</param>
         /// <returns>
         /// An object containing the route name, as well as the route values.
         /// </returns>
@@ -62,25 +62,25 @@ namespace Infrastructure.HyperMedia.Linker
         /// </para>
         /// <para>
         /// The returned <see cref="Rouple.RouteValues" /> will be all entries
-        /// of the <paramref name="a_routeValues" />, plus a value for an
+        /// of the <paramref name="routeValues" />, plus a value for an
         /// additional "controller" key, derived from
-        /// <paramref name="a_method" />.
+        /// <paramref name="method" />.
         /// </para>
         /// </remarks>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "This method should produce URIs with lower-case letters, so ultimately, it would have to invoke some sort of ToLower method.")]
         public Rouple Dispatch(
-            MethodCallExpression a_method,
-            IDictionary<string, object> a_routeValues)
+            MethodCallExpression method,
+            IDictionary<string, object> routeValues)
         {
-            if (a_method == null)
-                throw new ArgumentNullException("a_method");
+            if (method == null)
+                throw new ArgumentNullException("method");
 
-            var newRouteValues = new Dictionary<string, object>(a_routeValues);
+            var newRouteValues = new Dictionary<string, object>(routeValues);
 
-           if (a_method
+           if (method
                   .Object != null)
            {
-              var controllerName = a_method
+              var controllerName = method
                  .Object
                  .Type
                  .Name
@@ -89,7 +89,7 @@ namespace Infrastructure.HyperMedia.Linker
               newRouteValues["controller"] = controllerName;
            }
 
-           return new Rouple(m_routeName, newRouteValues);
+           return new Rouple(_routeName, newRouteValues);
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace Infrastructure.HyperMedia.Linker
         /// <seealso cref="DefaultRouteDispatcher(string)" />
         public string RouteName
         {
-            get { return m_routeName; }
+            get { return _routeName; }
         }
     }
 }

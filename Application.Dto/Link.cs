@@ -11,11 +11,11 @@ namespace Application.Dto
       {
       }
 
-      public Link(string a_uri, string a_relation, string a_mediaType)
+      public Link(string uri, string relation, string mediaType)
       {
-         Uri = a_uri;
-         Relation = a_relation;
-         MediaType = a_mediaType;
+         Uri = uri;
+         Relation = relation;
+         MediaType = mediaType;
       }
 
       #region ILink Members
@@ -53,19 +53,19 @@ namespace Application.Dto
 
       #region Equality members
 
-      public bool Equals(Link a_other)
+      public bool Equals(Link other)
       {
-         if (ReferenceEquals(null, a_other)) return false;
-         if (ReferenceEquals(this, a_other)) return true;
-         return Equals(a_other.Uri, Uri) && Equals(a_other.Relation, Relation) && Equals(a_other.MediaType, MediaType);
+         if (ReferenceEquals(null, other)) return false;
+         if (ReferenceEquals(this, other)) return true;
+         return Equals(other.Uri, Uri) && Equals(other.Relation, Relation) && Equals(other.MediaType, MediaType);
       }
 
-      public override bool Equals(object a_obj)
+      public override bool Equals(object obj)
       {
-         if (ReferenceEquals(null, a_obj)) return false;
-         if (ReferenceEquals(this, a_obj)) return true;
-         if (a_obj.GetType() != typeof (Link)) return false;
-         return Equals((Link) a_obj);
+         if (ReferenceEquals(null, obj)) return false;
+         if (ReferenceEquals(this, obj)) return true;
+         if (obj.GetType() != typeof (Link)) return false;
+         return Equals((Link) obj);
       }
 
       public override int GetHashCode()

@@ -11,27 +11,27 @@ namespace Test.Domain
    [TestFixture]
    public class GivenACanceledOrder
    {
-      private Order m_order;
-      private OrderDto m_dto;
+      private Order _order;
+      private OrderDto _dto;
       [SetUp]
       public void SetUp()
       {
          DtoMapper mapper = new DtoMapper(new LinkProvider());
-         m_order = new Order();
-         m_order.Cancel("You are too slow.");
-         m_dto = mapper.Map<Order, OrderDto>(m_order);
+         _order = new Order();
+         _order.Cancel("You are too slow.");
+         _dto = mapper.Map<Order, OrderDto>(_order);
       }
 
       [Test]
       public void NextStepsShouldBeEmpty()
       {
-         m_dto.Links.Should().Be.Empty();
+         _dto.Links.Should().Be.Empty();
       }
 
       [Test]
       public void CancelShouldThrow()
       {
-         m_order.Executing(a_o => a_o.Cancel("error"))
+         _order.Executing(o => o.Cancel("error"))
              .Throws<InvalidOrderOperationException>()
              .And
              .Exception.Message.Should().Be.EqualTo("The order can not be canceled because it is canceled.");
@@ -39,7 +39,7 @@ namespace Test.Domain
       [Test]
       public void AddItemShouldThrow()
       {
-         m_order.Executing(a_o => a_o.AddItem(new OrderItem()))
+         _order.Executing(o => o.AddItem(new OrderItem()))
              .Throws<InvalidOrderOperationException>()
              .And
              .Exception.Message.Should().Be.EqualTo("Can't add another item to the order because it is canceled.");
@@ -47,7 +47,7 @@ namespace Test.Domain
       [Test]
       public void PayShouldThrow()
       {
-         m_order.Executing(a_o => a_o.Pay("a", "b"))
+         _order.Executing(o => o.Pay("a", "b"))
              .Throws<InvalidOrderOperationException>()
              .And
              .Exception.Message.Should().Be.EqualTo("The order can not be paid because it is canceled.");

@@ -10,11 +10,11 @@
 
       #endregion
 
-      public override bool Equals(object a_obj)
+      public override bool Equals(object obj)
       {
-         var other = a_obj as EntityBase;
+         var other = obj as EntityBase;
          if (other == null) return false;
-         if (default(long) == other.Id) return ReferenceEquals(this, a_obj);
+         if (default(long) == other.Id) return ReferenceEquals(this, obj);
          return other.Id == Id;
       }
 

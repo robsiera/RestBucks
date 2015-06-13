@@ -10,9 +10,9 @@ namespace Infrastructure
    /// <typeparam name="T"></typeparam>
    public interface IRepository<T>
    {
-      void MakePersistent(params T[] a_entities);
-      T GetById(long a_id);
-      IQueryable<T> Retrieve(Expression<Func<T, bool>> a_criteria);
+      void MakePersistent(params T[] entities);
+      T GetById(long id);
+      IQueryable<T> Retrieve(Expression<Func<T, bool>> criteria);
       IQueryable<T> RetrieveAll();
    }
 }

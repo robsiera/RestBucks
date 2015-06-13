@@ -7,11 +7,11 @@ namespace Infrastructure.Persistance.Mappings
    {
       public ProductMapper()
       {
-         Id(a_x => a_x.Id);
-         Version(a_x => a_x.Version);
-         Map(a_x => a_x.Name);
-         Map(a_x => a_x.Price);
-         HasManyToMany(a_x => a_x.Customizations).AsSet().Access.CamelCaseField(Prefix.Underscore);
+         Id(x => x.Id);
+         Version(x => x.Version);
+         Map(x => x.Name);
+         Map(x => x.Price);
+         HasManyToMany(x => x.Customizations).AsSet().Access.CamelCaseField(Prefix.Underscore);
       }
    }
 }

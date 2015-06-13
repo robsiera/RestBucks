@@ -10,8 +10,8 @@ namespace Infrastructure
       /// </summary>
       /// <typeparam name="TSource">Domain type</typeparam>
       /// <typeparam name="TSourceDto">DTO representation</typeparam>
-      /// <param name="a_source">Domain instance</param>
+      /// <param name="source">Domain instance</param>
       /// <returns>Dto representation</returns>
-      TSourceDto Map<TSource, TSourceDto>(TSource a_source);
+      TSourceDto Map<TSource, TSourceDto>(TSource source);
    }
 }

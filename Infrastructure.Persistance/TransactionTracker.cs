@@ -8,7 +8,7 @@ namespace Infrastructure.Persistance
    {
       #region Fields
 
-      private bool m_disposed;
+      private bool _disposed;
 
       #endregion
 
@@ -26,12 +26,12 @@ namespace Infrastructure.Persistance
       /// <filterpriority>2</filterpriority>
       public void Dispose()
       {
-         if (m_disposed)
+         if (_disposed)
          {
             return;
          }
 
-         m_disposed = true;
+         _disposed = true;
 
          if (CurrentTransaction == null)
          {

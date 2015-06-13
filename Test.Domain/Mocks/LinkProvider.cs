@@ -9,9 +9,9 @@ namespace Test.Domain.Mocks
    {
       #region Implementation of IResourceLinkProvider
 
-      public IEnumerable<ILink> GetLinks<TEntity>(TEntity a_entity)
+      public IEnumerable<ILink> GetLinks<TEntity>(TEntity entity)
       {
-         Order order = a_entity as Order;
+         Order order = entity as Order;
          if (order == null)
          {
             yield break;

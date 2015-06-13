@@ -7,10 +7,10 @@ namespace Infrastructure.Persistance.Mappings
    {
       public CustomizationMapper()
       {
-         Id(a_x => a_x.Id).GeneratedBy.Native();
-         Version(a_x => a_x.Version);
-         Map(a_x => a_x.Name);
-         HasManyToMany(a_x => a_x.PossibleValues).Cascade.All().AsSet().Element("id").Access.CamelCaseField(Prefix.Underscore);
+         Id(x => x.Id).GeneratedBy.Native();
+         Version(x => x.Version);
+         Map(x => x.Name);
+         HasManyToMany(x => x.PossibleValues).Cascade.All().AsSet().Element("id").Access.CamelCaseField(Prefix.Underscore);
       }
    }
 }

@@ -18,11 +18,11 @@ namespace Infrastructure.Persistance.Modules
       /// Configure session Factory
       /// </summary>
       /// <returns>Session</returns>
-      private ISessionFactory CreateSessionFactory(IComponentContext a_componentContext)
+      private ISessionFactory CreateSessionFactory(IComponentContext componentContext)
       {
          return Fluently.Configure()
-            .Database(MsSqlConfiguration.MsSql2008.ConnectionString(a_c => a_c.FromConnectionStringWithKey("Restbucks")))
-            .Mappings(a_m => a_m.FluentMappings.AddFromAssemblyOf<NHibernateModule>())
+            .Database(MsSqlConfiguration.MsSql2008.ConnectionString(c => c.FromConnectionStringWithKey("Restbucks")))
+            .Mappings(m => m.FluentMappings.AddFromAssemblyOf<NHibernateModule>())
             .BuildSessionFactory();
       }
 
@@ -36,24 +36,24 @@ namespace Infrastructure.Persistance.Modules
       /// <remarks>
       /// Note that the ContainerBuilder parameter is unique to this module.
       /// </remarks>
-      /// <param name="a_builder">The builder through which components can be
+      /// <param name="builder">The builder through which components can be
       ///             registered.</param>
-      protected override void Load(ContainerBuilder a_builder)
+      protected override void Load(ContainerBuilder builder)
       {
-         a_builder.RegisterGeneric(typeof(Repository<>))
+         builder.RegisterGeneric(typeof(Repository<>))
                .As(typeof(IRepository<>))
                .InstancePerApiRequest();
 
-         a_builder.Register(a_c => new TransactionTracker())
+         builder.Register(c => new TransactionTracker())
              .InstancePerApiRequest();
 
-         a_builder.Register(a_c => a_c.Resolve<ISessionFactory>().OpenSession())
+         builder.Register(c => c.Resolve<ISessionFactory>().OpenSession())
              .InstancePerApiRequest()
-             .OnActivated(a_e => a_e.Context.Resolve<TransactionTracker>().CurrentTransaction = a_e.Instance.BeginTransaction());
+             .OnActivated(e => e.Context.Resolve<TransactionTracker>().CurrentTransaction = e.Instance.BeginTransaction());
 
-         a_builder.Register(CreateSessionFactory).SingleInstance();
+         builder.Register(CreateSessionFactory).SingleInstance();
 
-         base.Load(a_builder);
+         base.Load(builder);
       }
 
       #endregion

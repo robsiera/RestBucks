@@ -14,7 +14,7 @@ namespace Test.Data
         public void CanStoreACustomization()
         {
            long customizationId;
-            using (var session = m_sessionFactory.OpenSession())
+            using (var session = _sessionFactory.OpenSession())
             using(var tx = session.BeginTransaction())
             {
                 var repository = new Repository<Customization>(session);
@@ -23,7 +23,7 @@ namespace Test.Data
                 customizationId = customization.Id;
                 tx.Commit();
             }
-            using (var session = m_sessionFactory.OpenSession())
+            using (var session = _sessionFactory.OpenSession())
             {
                 var repository = new Repository<Customization>(session);
                 Customization readed = repository.GetById(customizationId);
@@ -36,7 +36,7 @@ namespace Test.Data
         {
             //Database.SetInitializer(new DropCreateDatabaseAlways<CoffeeShopContext>());
             long id;
-            using (var session = m_sessionFactory.OpenSession())
+            using (var session = _sessionFactory.OpenSession())
             using (var tx = session.BeginTransaction())
             {
                 var repository = new Repository<Product>(session);
@@ -51,7 +51,7 @@ namespace Test.Data
                 tx.Commit();
             }
 
-            using (var session = m_sessionFactory.OpenSession())
+            using (var session = _sessionFactory.OpenSession())
             using (session.BeginTransaction())
             {
                 var repository = new Repository<Product>(session);
@@ -65,7 +65,7 @@ namespace Test.Data
         public void CanStoreOneCustomizationInTwoProducts()
         {
             long customizationId;
-            using (var session = m_sessionFactory.OpenSession())
+            using (var session = _sessionFactory.OpenSession())
             using (var tx = session.BeginTransaction())
             {
                 var customizationRepository = new Repository<Customization>(session);
@@ -85,7 +85,7 @@ namespace Test.Data
                 tx.Commit();
             }
 
-            using (var session = m_sessionFactory.OpenSession())
+            using (var session = _sessionFactory.OpenSession())
             {
                 new Repository<Product>(session)
                     .Retrieve(p => p.Customizations.Any(c => c.Id == customizationId))
@@ -96,7 +96,7 @@ namespace Test.Data
         [Test]
         public void CanStoreTwoProducts()
         {
-            using (var session = m_sessionFactory.OpenSession())
+            using (var session = _sessionFactory.OpenSession())
             using (var tx = session.BeginTransaction())
             {
                 var repository = new Repository<Product>(session);

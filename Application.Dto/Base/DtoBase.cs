@@ -7,19 +7,19 @@ namespace Application.Dto.Base
 {
     public class DtoBase
     {
-       private readonly List<ILink> m_links = new List<ILink>();
+       private readonly List<ILink> _links = new List<ILink>();
 
         [JsonProperty(Order = 100)]
-        public IList<ILink> Links { get { return m_links; } }
+        public IList<ILink> Links { get { return _links; } }
 
-        public void AddLink(ILink a_link)
+        public void AddLink(ILink link)
         {
-           m_links.Add(a_link);
+           _links.Add(link);
         }
 
-        public void AddLinks(params ILink[] a_links)
+        public void AddLinks(params ILink[] links)
         {
-           Array.ForEach(a_links, AddLink);
+           Array.ForEach(links, AddLink);
         }
     }
 }

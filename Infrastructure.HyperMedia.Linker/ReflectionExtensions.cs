@@ -6,10 +6,10 @@ namespace Infrastructure.HyperMedia.Linker
     /// <summary>A class with some extension methods with regards to reflection.</summary>
     public static class ReflectionExtensions
     {
-        /// <summary>Checks whether <paramref name="a_left"/> refers to the same method as <paramref name="a_right"/>.</summary>
-        /// <param name="a_left">The left operand.</param>
-        /// <param name="a_right">The right operand.</param>
-        /// <returns><c>true</c> if <paramref name="a_left"/> refers to the same method as <paramref name="a_right"/>; otherwise, <c>false</c>.</returns>
+        /// <summary>Checks whether <paramref name="left"/> refers to the same method as <paramref name="right"/>.</summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns><c>true</c> if <paramref name="left"/> refers to the same method as <paramref name="right"/>; otherwise, <c>false</c>.</returns>
         /// <remarks>
         ///     <para>
         /// Two <see cref="MethodInfo"/> instances can be un-equal although they refer to the same physical method. This happens when <c>Base</c> has a virtual method
@@ -44,14 +44,14 @@ namespace Infrastructure.HyperMedia.Linker
         /// the reflection instance has been created from a derived type
         ///     </para>
         /// </remarks>
-        public static bool RefersToTheSameMethodAs(this MethodInfo a_left, MethodInfo a_right)
+        public static bool RefersToTheSameMethodAs(this MethodInfo left, MethodInfo right)
         {
-            if (a_left == null)
-                throw new ArgumentNullException("a_left");
-            if (a_right == null)
-                throw new ArgumentNullException("a_right");
+            if (left == null)
+                throw new ArgumentNullException("left");
+            if (right == null)
+                throw new ArgumentNullException("right");
 
-            return a_left.MethodHandle.Equals(a_right.MethodHandle);
+            return left.MethodHandle.Equals(right.MethodHandle);
         }
     }
 }

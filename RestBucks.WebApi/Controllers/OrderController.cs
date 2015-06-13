@@ -16,75 +16,63 @@ namespace RestBucks.WebApi.Controllers
    {
       #region Fields
 
-      private readonly IRepository<Order> m_orderRepository;
-      private readonly IDtoMapper m_dtoMapper;
-      private readonly IResourceLinker m_resourceLinker;
+      private readonly IRepository<Order> _orderRepository;
+      private readonly IDtoMapper _dtoMapper;
+      private readonly IResourceLinker _resourceLinker;
 
       #endregion
 
       /// <summary>
       /// Initializes a new instance of the <see cref="T:System.Web.Mvc.Controller"/> class.
       /// </summary>
-      public OrderController(IRepository<Order> a_orderRepository, IDtoMapper a_dtoMapper,
-         IResourceLinker a_resourceLinker)
+      public OrderController(IRepository<Order> orderRepository, IDtoMapper dtoMapper, IResourceLinker resourceLinker)
       {
-         if (a_orderRepository == null)
+         if (orderRepository == null)
          {
-            throw new ArgumentNullException("a_orderRepository");
+            throw new ArgumentNullException("orderRepository");
          }
 
-         if (a_dtoMapper == null)
+         if (dtoMapper == null)
          {
-            throw new ArgumentNullException("a_dtoMapper");
+            throw new ArgumentNullException("dtoMapper");
          }
 
-         m_orderRepository = a_orderRepository;
-         m_dtoMapper = a_dtoMapper;
-         m_resourceLinker = a_resourceLinker;
+         _orderRepository = orderRepository;
+         _dtoMapper = dtoMapper;
+         _resourceLinker = resourceLinker;
       }
 
-      public HttpResponseMessage Get(int a_orderId)
+      public HttpResponseMessage Get(int orderId)
       {
-         Order order = m_orderRepository.GetById(a_orderId);
+         Order order = _orderRepository.GetById(orderId);
          if (order == null)
          {
             return new HttpResponseMessage(HttpStatusCode.NotFound);
          }
 
-         return Request.CreateResponse(HttpStatusCode.Accepted, m_dtoMapper.Map<Order, OrderDto>(order));
+         return Request.CreateResponse(HttpStatusCode.Accepted, _dtoMapper.Map<Order, OrderDto>(order));
       }
-
-      //public HttpResponseMessage GetReceipt(int a_orderId)
-      //{
-      //   Order order = m_orderRepository.GetById(a_orderId);
-      //   if (order == null)
-      //   {
-      //      return new HttpResponseMessage(HttpStatusCode.NotFound);
-      //   }
-
-      //   return Request.CreateResponse(HttpStatusCode.Accepted, m_dtoMapper.Map<Order, OrderDto>(order));
-      //}
-
-      public HttpResponseMessage Post(OrderLocationDto a_orderDtoModel)
+       
+      public HttpResponseMessage Post(OrderLocationDto orderDtoModel)
       {
-         Order order = m_orderRepository.GetById(a_orderDtoModel.OrderId);
+         Order order = _orderRepository.GetById(orderDtoModel.OrderId);
          if (order == null)
          {
             return Request.CreateResponse(HttpStatusCode.NotFound);
          }
 
-         order.Location = a_orderDtoModel.Location;
+         order.Location = orderDtoModel.Location;
          return Request.CreateResponse(HttpStatusCode.OK);
       }
 
-      public HttpResponseMessage PostPay(int a_orderId, PaymentDto a_paymentDto)
+      public HttpResponseMessage PostPay(int orderId, PaymentDto paymentDto)
       {
          return Request.CreateResponse(HttpStatusCode.NotFound);
       }
 
-      public HttpResponseMessage Delete(int a_orderId)
+      public HttpResponseMessage Delete(int orderId)
       {
-         var order = m_orderRepository.GetById(a_orderId);
+         var order = _orderRepository.GetById(orderId);
          if (order == null)
          {
             return Request.CreateResponse(HttpStatusCode.NotFound);
@@ -93,5 +81,16 @@ namespace RestBucks.WebApi.Controllers
          order.Cancel("canceled from the rest interface");
          return Request.CreateResponse(HttpStatusCode.OK);
       }
+
+       //public HttpResponseMessage GetReceipt(int orderId)
+       //{
+       //   Order order = _orderRepository.GetById(orderId);
+       //   if (order == null)
+       //   {
+       //      return new HttpResponseMessage(HttpStatusCode.NotFound);
+       //   }
+
+       //   return Request.CreateResponse(HttpStatusCode.Accepted, _dtoMapper.Map<Order, OrderDto>(order));
+       //}
    }
 }

@@ -14,33 +14,33 @@ namespace Infrastructure.HyperMedia.Linker
     /// </remarks>
     public class Rouple
     {
-        private readonly string m_routeName;
-        private readonly IDictionary<string, object> m_routeValues;
+        private readonly string _routeName;
+        private readonly IDictionary<string, object> _routeValues;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Rouple"/> class.
         /// </summary>
-        /// <param name="a_routeName">A route name.</param>
-        /// <param name="a_routeValues">Route values.</param>
+        /// <param name="routeName">A route name.</param>
+        /// <param name="routeValues">Route values.</param>
         /// <remarks>
         /// <para>
-        /// The <paramref name="a_routeName" /> is available after initialization
+        /// The <paramref name="routeName" /> is available after initialization
         /// via the <see cref="RouteName" /> property.
         /// </para>
         /// <para>
-        /// The <paramref name="a_routeValues" /> are available after
+        /// The <paramref name="routeValues" /> are available after
         /// initialization via the <see cref="RouteValues" /> property.
         /// </para>
         /// </remarks>
-        public Rouple(string a_routeName, IDictionary<string, object> a_routeValues)
+        public Rouple(string routeName, IDictionary<string, object> routeValues)
         {
-            if (a_routeName == null)
-                throw new ArgumentNullException("a_routeName");
-            if (a_routeValues == null)
-                throw new ArgumentNullException("a_routeValues");
+            if (routeName == null)
+                throw new ArgumentNullException("routeName");
+            if (routeValues == null)
+                throw new ArgumentNullException("routeValues");
                         
-            m_routeName = a_routeName;
-            m_routeValues = a_routeValues;
+            _routeName = routeName;
+            _routeValues = routeValues;
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Infrastructure.HyperMedia.Linker
         /// <seealso cref="Rouple(string, IDictionary{string, object})" />
         public string RouteName
         {
-            get { return m_routeName; }
+            get { return _routeName; }
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Infrastructure.HyperMedia.Linker
         /// <seealso cref="Rouple(string, IDictionary{string, object})" />
         public IDictionary<string, object> RouteValues
         {
-            get { return m_routeValues; }
+            get { return _routeValues; }
         }
     }
 }

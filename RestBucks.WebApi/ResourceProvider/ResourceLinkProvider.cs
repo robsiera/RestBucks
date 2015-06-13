@@ -8,11 +8,11 @@ namespace RestBucks.WebApi.ResourceProvider
    {
       #region Implementation of IResourceLinkProvider
 
-      public IEnumerable<ILink> GetLinks<TEntity>(TEntity a_entity)
+      public IEnumerable<ILink> GetLinks<TEntity>(TEntity entity)
       {
-         if (a_entity is Order)
+         if (entity is Order)
          {
-            foreach (ILink internalLink in GetInternalLinks(a_entity as Order))
+            foreach (ILink internalLink in GetInternalLinks(entity as Order))
             {
                yield return internalLink;
             }
@@ -23,11 +23,11 @@ namespace RestBucks.WebApi.ResourceProvider
 
       #region Private methods
 
-      private IEnumerable<ILink> GetInternalLinks(Order a_order)
+      private IEnumerable<ILink> GetInternalLinks(Order order)
       {
 
 
-         switch (a_order.Status)
+         switch (order.Status)
          {
             case OrderStatus.Unpaid:
                //yield return get;

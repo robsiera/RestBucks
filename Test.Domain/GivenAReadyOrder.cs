@@ -11,32 +11,32 @@ namespace Test.Domain
 {
    public class GivenAReadyOrder
    {
-      private OrderDto m_dto;
-      private Order m_order;
+      private OrderDto _dto;
+      private Order _order;
 
       [SetUp]
       public void SetUp()
       {
          var mapper = new DtoMapper(new LinkProvider());
-         m_order = new Order();
-         m_order.Pay("123", "jose");
-         m_order.Finish();
-         m_dto = mapper.Map<Order, OrderDto>(m_order);
+         _order = new Order();
+         _order.Pay("123", "jose");
+         _order.Finish();
+         _dto = mapper.Map<Order, OrderDto>(_order);
       }
 
       [Test]
       public void ThenNextStepsIncludeGet()
       {
-         m_dto.Links
+         _dto.Links
             .Satisfy(
-               a_links =>
-               a_links.Any(a_l => a_l.Uri == "http://restbuckson.net/order/0/receipt" && a_l.Relation.EndsWith("docs/receipt-coffee.htm")));
+               links =>
+               links.Any(l => l.Uri == "http://restbuckson.net/order/0/receipt" && l.Relation.EndsWith("docs/receipt-coffee.htm")));
       }
 
       [Test]
       public void CancelShouldThrow()
       {
-         m_order.Executing(a_o => a_o.Cancel("error"))
+         _order.Executing(o => o.Cancel("error"))
             .Throws<InvalidOrderOperationException>()
             .And
             .Exception.Message.Should().Be.EqualTo("The order can not be canceled because it is ready.");
@@ -45,7 +45,7 @@ namespace Test.Domain
       [Test]
       public void PayShouldThrow()
       {
-         m_order.Executing(a_o => a_o.Pay("a", "b"))
+         _order.Executing(o => o.Pay("a", "b"))
             .Throws<InvalidOrderOperationException>()
             .And
             .Exception.Message.Should().Be.EqualTo("The order can not be paid because it is ready.");

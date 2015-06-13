@@ -28,7 +28,7 @@ namespace Domain
 
       public virtual decimal Total
       {
-         get { return Items.Sum(a_i => a_i.Quantity*a_i.UnitPrice); }
+         get { return Items.Sum(i => i.Quantity*i.UnitPrice); }
       }
 
       public virtual Payment Payment { get; protected set; }
@@ -39,11 +39,11 @@ namespace Domain
       {
          if (!Items.Any()) yield return "The order must include at least one item.";
 
-         IEnumerable<string> itemsErrors = Items.SelectMany((a_i, a_index) => a_i.GetErrorMessages()
+         IEnumerable<string> itemsErrors = Items.SelectMany((i, index) => i.GetErrorMessages()
                                                                                  .Select(
-                                                                                    a_m =>
+                                                                                    m =>
                                                                                     string.Format("Item {0}: {1}",
-                                                                                                  a_index, a_m)));
+                                                                                                  index, m)));
 
          foreach (string itemsError in itemsErrors)
          {
@@ -53,7 +53,7 @@ namespace Domain
 
       #endregion
 
-      public virtual void AddItem(OrderItem a_orderItem)
+      public virtual void AddItem(OrderItem orderItem)
       {
          if (Status != OrderStatus.Unpaid)
          {
@@ -61,22 +61,22 @@ namespace Domain
                string.Format("Can't add another item to the order because it is {0}.",
                              Status.ToString().ToLower()));
          }
-         a_orderItem.Order = this;
-         _items.Add(a_orderItem);
+         orderItem.Order = this;
+         _items.Add(orderItem);
       }
 
-      public virtual void Cancel(string a_cancelReason)
+      public virtual void Cancel(string cancelReason)
       {
          if (Status != OrderStatus.Unpaid)
          {
             throw new InvalidOrderOperationException(string.Format("The order can not be canceled because it is {0}.",
                                                                    Status.ToString().ToLower()));
          }
-         CancelReason = a_cancelReason;
+         CancelReason = cancelReason;
          Status = OrderStatus.Canceled;
       }
 
-      public virtual void Pay(string a_cardNumber, string a_cardOwner)
+      public virtual void Pay(string cardNumber, string cardOwner)
       {
          if (Status != OrderStatus.Unpaid)
          {
@@ -84,7 +84,7 @@ namespace Domain
                                                                    Status.ToString().ToLower()));
          }
          Status = OrderStatus.Paid;
-         Payment = new Payment {CardOwner = a_cardOwner, CreditCardNumber = a_cardNumber};
+         Payment = new Payment {CardOwner = cardOwner, CreditCardNumber = cardNumber};
       }
 
       public virtual void Finish()

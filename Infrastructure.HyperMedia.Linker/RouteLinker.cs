@@ -24,51 +24,51 @@ namespace Infrastructure.HyperMedia.Linker
     /// <seealso cref="GetUri{T}(Expression{Action{T}})" />
     public class RouteLinker : IResourceLinker
     {
-        private readonly HttpRequestMessage m_request;
-        private readonly IRouteDispatcher m_dispatcher;
+        private readonly HttpRequestMessage _request;
+        private readonly IRouteDispatcher _dispatcher;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RouteLinker"/> class.
         /// </summary>
-        /// <param name="a_request">The current request.</param>
+        /// <param name="request">The current request.</param>
         /// <remarks>
         /// <para>
-        /// After initialization, the <paramref name="a_request" /> value is available through the
+        /// After initialization, the <paramref name="request" /> value is available through the
         /// <see cref="Request" /> property.
         /// </para>
         /// </remarks>
         /// <seealso cref="RouteLinker(HttpRequestMessage, IRouteDispatcher)" />
-        public RouteLinker(HttpRequestMessage a_request)
-            : this(a_request, new DefaultRouteDispatcher())
+        public RouteLinker(HttpRequestMessage request)
+            : this(request, new DefaultRouteDispatcher())
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RouteLinker"/> class.
         /// </summary>
-        /// <param name="a_request">The current request.</param>
-        /// <param name="a_dispatcher">A custom dispatcher.</param>
+        /// <param name="request">The current request.</param>
+        /// <param name="dispatcher">A custom dispatcher.</param>
         /// <remarks>
         /// <para>
         /// This constructor overload requires a custom <see cref="IRouteDispatcher" />. If you
         /// don't want to use a custom dispatcher, you can use the simpler constructor overload.
         /// </para>
         /// <para>
-        /// After initialization, the <paramref name="a_request" /> value is available through the
-        /// <see cref="Request" /> property; and the <paramref name="a_dispatcher" /> is available
+        /// After initialization, the <paramref name="request" /> value is available through the
+        /// <see cref="Request" /> property; and the <paramref name="dispatcher" /> is available
         /// through the <see cref="RouteDispatcher" /> property.
         /// </para>
         /// </remarks>
         /// <seealso cref="RouteLinker(HttpRequestMessage)" />
-        public RouteLinker(HttpRequestMessage a_request, IRouteDispatcher a_dispatcher)
+        public RouteLinker(HttpRequestMessage request, IRouteDispatcher dispatcher)
         {
-            if (a_request == null)
-                throw new ArgumentNullException("a_request");
-            if (a_dispatcher == null)
-                throw new ArgumentNullException("a_dispatcher");
+            if (request == null)
+                throw new ArgumentNullException("request");
+            if (dispatcher == null)
+                throw new ArgumentNullException("dispatcher");
 
-            m_request = a_request;
-            m_dispatcher = a_dispatcher;
+            _request = request;
+            _dispatcher = dispatcher;
         }
 
         /// <summary>
@@ -78,12 +78,12 @@ namespace Infrastructure.HyperMedia.Linker
         /// The type of resource to link to. This will typically be the type of an
         /// <see cref="System.Web.Http.ApiController" />, but doesn't have to be.
         /// </typeparam>
-        /// <param name="a_method">
+        /// <param name="method">
         /// An expression wich identifies the action method that serves the desired resource.
         /// </param>
         /// <returns>
         /// An <see cref="Uri" /> instance which represents the resource identifed by
-        /// <paramref name="a_method" />.
+        /// <paramref name="method" />.
         /// </returns>
         /// <remarks>
         /// <para>
@@ -96,7 +96,7 @@ namespace Infrastructure.HyperMedia.Linker
         /// </para>
         /// <para>
         /// The target Action Method can be type-safely identified by the
-        /// <paramref name="a_method" /> expression. The <typeparamref name="T" /> type argument will
+        /// <paramref name="method" /> expression. The <typeparamref name="T" /> type argument will
         /// typically indicate a particular class which derives from
         /// <see cref="System.Web.Http.ApiController" />, but there's no generic constraint on the
         /// type argument, so this is not required.
@@ -120,14 +120,14 @@ namespace Infrastructure.HyperMedia.Linker
         /// this (assuming that the base URI is http://localhost): http://localhost/api/foo/1337
         /// </example>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "The expression is a strongly typed in order to prevent the caller from passing any sort of expression. It doesn't fully capture everything the caller might throw at it, but it does constrain the caller as well as possible. This enables the developer to get a compile-time exception instead of a run-time exception in most cases where an invalid expression is being supplied.")]
-        public Uri GetUri<T>(Expression<Action<T>> a_method)
+        public Uri GetUri<T>(Expression<Action<T>> method)
         {
-            if (a_method == null)
-                throw new ArgumentNullException("a_method");
+            if (method == null)
+                throw new ArgumentNullException("method");
 
-            var methodCallExp = a_method.Body as MethodCallExpression;
+            var methodCallExp = method.Body as MethodCallExpression;
             if (methodCallExp == null)
-                throw new ArgumentException("The expression's body must be a MethodCallExpression. The code block supplied should invoke a method.\nExample: x => x.Foo().", "a_method");
+                throw new ArgumentException("The expression's body must be a MethodCallExpression. The code block supplied should invoke a method.\nExample: x => x.Foo().", "method");
 
             var r = Dispatch(methodCallExp);
 
@@ -136,31 +136,31 @@ namespace Infrastructure.HyperMedia.Linker
             return new Uri(baseUri, relativeUri);
         }
 
-        private Rouple Dispatch(MethodCallExpression a_methodCallExp)
+        private Rouple Dispatch(MethodCallExpression methodCallExp)
         {
-            var routeValues = a_methodCallExp.Method.GetParameters()
-                .ToDictionary(a_p => a_p.Name, a_p => GetValue(a_methodCallExp, a_p));
-            return m_dispatcher.Dispatch(a_methodCallExp, routeValues);
+            var routeValues = methodCallExp.Method.GetParameters()
+                .ToDictionary(p => p.Name, p => GetValue(methodCallExp, p));
+            return _dispatcher.Dispatch(methodCallExp, routeValues);
         }
 
-        private static object GetValue(MethodCallExpression a_methodCallExp,
-            ParameterInfo a_p)
+        private static object GetValue(MethodCallExpression methodCallExp,
+            ParameterInfo p)
         {
-            var arg = a_methodCallExp.Arguments[a_p.Position];
+            var arg = methodCallExp.Arguments[p.Position];
             var lambda = Expression.Lambda(arg);
             return lambda.Compile().DynamicInvoke().ToString();
         }
 
-        private Uri GetRelativeUri(Rouple a_r)
+        private Uri GetRelativeUri(Rouple r)
         {
             var urlHelper = CreateUrlHelper();
-            var relativeUri = urlHelper.Route(a_r.RouteName, a_r.RouteValues);
+            var relativeUri = urlHelper.Route(r.RouteName, r.RouteValues);
             return new Uri(relativeUri, UriKind.Relative);
         }
 
         private Uri GetBaseUri()
         {
-            var authority = m_request.RequestUri.GetLeftPart(UriPartial.Authority);
+            var authority = _request.RequestUri.GetLeftPart(UriPartial.Authority);
             return new Uri(authority);
         }
 
@@ -172,16 +172,16 @@ namespace Infrastructure.HyperMedia.Linker
         private HttpRequestMessage CopyRequestWithoutRouteValues()
         {
             var r = new HttpRequestMessage(
-                m_request.Method,
-                m_request.RequestUri);
+                _request.Method,
+                _request.RequestUri);
 
             try
             {
-                foreach (var kvp in m_request.Properties)
+                foreach (var kvp in _request.Properties)
                     if (kvp.Key != HttpPropertyKeys.HttpRouteDataKey)
                         r.Properties.Add(kvp.Key, kvp.Value);
 
-                var routeData = m_request.GetRouteData();
+                var routeData = _request.GetRouteData();
                 r.Properties.Add(
                     HttpPropertyKeys.HttpRouteDataKey,
                     new HttpRouteData(routeData.Route));
@@ -202,7 +202,7 @@ namespace Infrastructure.HyperMedia.Linker
         /// <seealso cref="RouteLinker(HttpRequestMessage, IRouteDispatcher)" />
         public HttpRequestMessage Request
         {
-            get { return m_request; }
+            get { return _request; }
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace Infrastructure.HyperMedia.Linker
         /// <seealso cref="RouteLinker(HttpRequestMessage, IRouteDispatcher)" />
         public IRouteDispatcher RouteDispatcher
         {
-            get { return m_dispatcher; }
+            get { return _dispatcher; }
         }
     }
 }

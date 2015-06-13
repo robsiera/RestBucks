@@ -12,37 +12,37 @@ namespace Infrastructure.Persistance
    /// <typeparam name="T"></typeparam>
    public class Repository<T> : IRepository<T>
    {
-      private readonly ISession m_session;
+      private readonly ISession _session;
 
-      public Repository(ISession a_session)
+      public Repository(ISession session)
       {
-         m_session = a_session;
+         _session = session;
       }
 
       private ISession CurrentSession
       {
-         get { return m_session; }
+         get { return _session; }
       }
 
       #region IRepository<T> Members
 
-      public void MakePersistent(params T[] a_entities)
+      public void MakePersistent(params T[] entities)
       {
-         foreach (T entity in a_entities)
+         foreach (T entity in entities)
          {
             CurrentSession.Save(entity);
          }
       }
 
-      public T GetById(long a_id)
+      public T GetById(long id)
       {
-         return CurrentSession.Get<T>(a_id);
+         return CurrentSession.Get<T>(id);
       }
 
-      public IQueryable<T> Retrieve(Expression<Func<T, bool>> a_criteria)
+      public IQueryable<T> Retrieve(Expression<Func<T, bool>> criteria)
       {
          return CurrentSession
-            .Query<T>().Where(a_criteria);
+            .Query<T>().Where(criteria);
       }
 
       public IQueryable<T> RetrieveAll()

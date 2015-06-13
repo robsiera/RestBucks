@@ -8,21 +8,21 @@ namespace Application
 {
    public class DtoMapper : IDtoMapper
    {
-      private readonly IResourceLinkProvider m_linkProvider;
+      private readonly IResourceLinkProvider _linkProvider;
 
       #region Constructors
 
       /// <summary>
       /// Initializes a new instance of the <see cref="T:System.Object"/> class.
       /// </summary>
-      public DtoMapper(IResourceLinkProvider a_linkProvider)
+      public DtoMapper(IResourceLinkProvider linkProvider)
       {
-         if (a_linkProvider == null)
+         if (linkProvider == null)
          {
-            throw new ArgumentNullException("a_linkProvider");
+            throw new ArgumentNullException("linkProvider");
          }
 
-         m_linkProvider = a_linkProvider;
+         _linkProvider = linkProvider;
          ConfigureMapper();
       }
 
@@ -32,18 +32,18 @@ namespace Application
 
       protected virtual void ConfigureMapper()
       {
-         Mapper.Initialize(a_cfg =>
+         Mapper.Initialize(cfg =>
                               {
-                                 a_cfg.CreateMap<Order, OrderDto>(MemberList.Source)
-                                    .AfterMap((a_src, a_dest) =>
+                                 cfg.CreateMap<Order, OrderDto>(MemberList.Source)
+                                    .AfterMap((src, dest) =>
                                                  {
-                                                    foreach (ILink link in m_linkProvider.GetLinks(a_src))
+                                                    foreach (ILink link in _linkProvider.GetLinks(src))
                                                     {
-                                                       a_dest.Links.Add(link);
+                                                       dest.Links.Add(link);
                                                     }
                                                  });
-                                 a_cfg.CreateMap<OrderItem, OrderItemDto>(MemberList.Source);
-                                 a_cfg.CreateMap<Payment, PaymentDto>(MemberList.Source);
+                                 cfg.CreateMap<OrderItem, OrderItemDto>(MemberList.Source);
+                                 cfg.CreateMap<Payment, PaymentDto>(MemberList.Source);
                               });
       }
 
@@ -56,11 +56,11 @@ namespace Application
       /// </summary>
       /// <typeparam name="TSource">Domain type</typeparam>
       /// <typeparam name="TSourceDto">DTO representation</typeparam>
-      /// <param name="a_source">Domain instance</param>
+      /// <param name="source">Domain instance</param>
       /// <returns>Dto representation</returns>
-      public TSourceDto Map<TSource, TSourceDto>(TSource a_source)
+      public TSourceDto Map<TSource, TSourceDto>(TSource source)
       {
-         return Mapper.Map<TSource, TSourceDto>(a_source);
+         return Mapper.Map<TSource, TSourceDto>(source);
       }
 
       #endregion

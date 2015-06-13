@@ -17,77 +17,77 @@ namespace Test.Domain
       public void SetUp()
       {
          var mapper = new DtoMapper(new LinkProvider());
-         m_order = new Order();
-         m_dto = mapper.Map<Order, OrderDto>(m_order);
+         _order = new Order();
+         _dto = mapper.Map<Order, OrderDto>(_order);
       }
 
       #endregion
 
-      private Order m_order;
-      private OrderDto m_dto;
+      private Order _order;
+      private OrderDto _dto;
 
       [Test]
       public void CancelShouldWork()
       {
-         m_order.Cancel("error");
-         m_order.Status.Should().Be.EqualTo(OrderStatus.Canceled);
+         _order.Cancel("error");
+         _order.Status.Should().Be.EqualTo(OrderStatus.Canceled);
       }
 
       [Test]
       public void NextStepShouldNotIncludeReceipt()
       {
-         m_dto.Links
+         _dto.Links
             .Satisfy(
-               a_links =>
-               !a_links.Any(
-                  a_l => a_l.Uri == "http://restbuckson.net/order/ready/0" && a_l.Relation.EndsWith("docs/receipt-coffee.htm")));
+               links =>
+               !links.Any(
+                  l => l.Uri == "http://restbuckson.net/order/ready/0" && l.Relation.EndsWith("docs/receipt-coffee.htm")));
       }
 
       [Test]
       public void PayShouldWork()
       {
-         m_order.Pay("Jose", "123123123");
-         m_order.Status.Should().Be.EqualTo(OrderStatus.Paid);
+         _order.Pay("Jose", "123123123");
+         _order.Status.Should().Be.EqualTo(OrderStatus.Paid);
       }
 
       [Test]
       public void TheNextStepsIncludePay()
       {
-         m_dto.Links
+         _dto.Links
             .Satisfy(
-               a_links =>
-               a_links.Any(
-                  a_l =>
-                  a_l.Uri == "http://restbuckson.net/order/0/payment" && a_l.Relation.EndsWith("docs/order-pay.htm")));
+               links =>
+               links.Any(
+                  l =>
+                  l.Uri == "http://restbuckson.net/order/0/payment" && l.Relation.EndsWith("docs/order-pay.htm")));
       }
 
       [Test]
       public void TheNextStepsIncludeUpdate()
       {
-         m_dto.Links
+         _dto.Links
             .Satisfy(
-               a_links =>
-               a_links.Any(
-                  a_l => a_l.Uri == "http://restbuckson.net/order/0" && a_l.Relation.EndsWith("docs/order-update.htm")));
+               links =>
+               links.Any(
+                  l => l.Uri == "http://restbuckson.net/order/0" && l.Relation.EndsWith("docs/order-update.htm")));
       }
 
       [Test]
       public void ThenNextStepsIncludeCancel()
       {
-         m_dto.Links
+         _dto.Links
             .Satisfy(
-               a_links =>
-               a_links.Any(
+               links =>
+               links.Any(
                   l => l.Uri == "http://restbuckson.net/order/0" && l.Relation.EndsWith("docs/order-cancel.htm")));
       }
 
       [Test]
       public void ThenNextStepsIncludeGet()
       {
-         m_dto.Links
+         _dto.Links
             .Satisfy(
-               a_links =>
-               a_links.Any(l => l.Uri == "http://restbuckson.net/order/0" && l.Relation.EndsWith("docs/order-get.htm")));
+               links =>
+               links.Any(l => l.Uri == "http://restbuckson.net/order/0" && l.Relation.EndsWith("docs/order-get.htm")));
       }
    }
 }

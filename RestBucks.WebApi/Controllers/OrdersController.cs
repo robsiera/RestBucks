@@ -17,9 +17,9 @@ namespace RestBucks.WebApi.Controllers
    {
       #region Fields
 
-      private readonly IDtoMapper m_dtoMapper;
-      private readonly IRepository<Order> m_orderRepository;
-      private readonly IRepository<Product> m_productRepository;
+      private readonly IDtoMapper _dtoMapper;
+      private readonly IRepository<Order> _orderRepository;
+      private readonly IRepository<Product> _productRepository;
 
       #endregion
 
@@ -28,27 +28,27 @@ namespace RestBucks.WebApi.Controllers
       /// <summary>
       /// Initializes a new instance of the <see cref="T:System.Web.Mvc.Controller"/> class.
       /// </summary>
-      public OrdersController(IRepository<Order> a_orderRepository,
-         IRepository<Product> a_productRepository, IDtoMapper a_dtoMapper)
+      public OrdersController(IRepository<Order> orderRepository,
+         IRepository<Product> productRepository, IDtoMapper dtoMapper)
       {
-         if (a_orderRepository == null)
+         if (orderRepository == null)
          {
-            throw new ArgumentNullException("a_orderRepository");
+            throw new ArgumentNullException("orderRepository");
          }
 
-         if (a_productRepository == null)
+         if (productRepository == null)
          {
-            throw new ArgumentNullException("a_productRepository");
+            throw new ArgumentNullException("productRepository");
          }
 
-         if (a_dtoMapper == null)
+         if (dtoMapper == null)
          {
-            throw new ArgumentNullException("a_dtoMapper");
+            throw new ArgumentNullException("dtoMapper");
          }
 
-         m_orderRepository = a_orderRepository;
-         m_productRepository = a_productRepository;
-         m_dtoMapper = a_dtoMapper;
+         _orderRepository = orderRepository;
+         _productRepository = productRepository;
+         _dtoMapper = dtoMapper;
       }
 
       #endregion
@@ -56,23 +56,23 @@ namespace RestBucks.WebApi.Controllers
       /// <summary>
       /// Creates an order
       /// </summary>
-      /// <param name="a_orderModel">Order dto model</param>
+      /// <param name="orderModel">Order dto model</param>
       /// <remarks>
       /// Json Invoke: {Location: "inShop", Items: {Name: "latte", Quantity: 5}}
       /// Xml invoke: 
       /// </remarks>
       /// <returns>Response</returns>
-      public HttpResponseMessage Post(OrderDto a_orderModel)
+      public HttpResponseMessage Post(OrderDto orderModel)
       {
          var order = new Order
          {
             Date = DateTime.Today,
-            Location = a_orderModel.Location
+            Location = orderModel.Location
          };
 
-         foreach (var requestedItem in a_orderModel.Items)
+         foreach (var requestedItem in orderModel.Items)
          {
-            var product = m_productRepository.GetByName(requestedItem.Name);
+            var product = _productRepository.GetByName(requestedItem.Name);
             if (product == null)
             {
                return Request.CreateResponse(HttpStatusCode.BadRequest, string.Format("We don't offer {0}", requestedItem.Name));
@@ -81,7 +81,7 @@ namespace RestBucks.WebApi.Controllers
             var orderItem = new OrderItem(product,
                                         requestedItem.Quantity,
                                         product.Price,
-                                        requestedItem.Preferences.ToDictionary(a_x => a_x.Key, a_y => a_y.Value));
+                                        requestedItem.Preferences.ToDictionary(x => x.Key, y => y.Value));
             order.AddItem(orderItem);
          }
 
@@ -91,7 +91,7 @@ namespace RestBucks.WebApi.Controllers
             return Request.CreateResponse(HttpStatusCode.BadRequest, string.Format("Invalid entities values {0}", content));
          }
 
-         m_orderRepository.MakePersistent(order);
+         _orderRepository.MakePersistent(order);
          //var uri = resourceLinker.GetUri<OrderResourceHandler>(orderResource => orderResource.Get(0, null), new { orderId = order.Id });
          return Request.CreateResponse(HttpStatusCode.OK);
       }

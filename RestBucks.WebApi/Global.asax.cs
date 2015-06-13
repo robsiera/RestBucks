@@ -33,7 +33,7 @@ namespace RestBucks.WebApi
          BundleConfig.RegisterBundles(BundleTable.Bundles);
          ContainerBuilder builder = new ContainerBuilder();
          //builder.RegisterAssemblyTypes(typeof (WebApiApplication).Assembly).Where(
-         //   a_c => a_c.IsAssignableTo<IHttpController>());
+         //   c => c.IsAssignableTo<IHttpController>());
 
          builder.RegisterModule<NHibernateModule>();
          IContainer container = builder.Build();

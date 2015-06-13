@@ -10,30 +10,30 @@ namespace Test.Data.Base
 {
    public class DataTestsBase
    {
-      protected ISessionFactory m_sessionFactory;
-      private Configuration m_configuration;
+      protected ISessionFactory _sessionFactory;
+      private Configuration _configuration;
 
       [TestFixtureSetUp]
       public void FixtureSetUp()
       {
-         m_sessionFactory = Fluently.Configure()
-            //.Database(MsSqlConfiguration.MsSql2008.ConnectionString(a_c => a_c.FromConnectionStringWithKey("Restbucks_Test"))
+         _sessionFactory = Fluently.Configure()
+            //.Database(MsSqlConfiguration.MsSql2008.ConnectionString(c => c.FromConnectionStringWithKey("Restbucks_Test"))
             .Database(SQLiteConfiguration.Standard.UsingFile("restbucks_test.db"))
-            .Mappings(a_m => a_m.FluentMappings.AddFromAssemblyOf<NHibernateModule>())
-            .ExposeConfiguration(a_c =>
+            .Mappings(m => m.FluentMappings.AddFromAssemblyOf<NHibernateModule>())
+            .ExposeConfiguration(c =>
                                     {
-                                       m_configuration = a_c;
-                                       new SchemaExport(a_c).Execute(true, true, false);
+                                       _configuration = c;
+                                       new SchemaExport(c).Execute(true, true, false);
                                     })
             .BuildSessionFactory();
 
-         m_sessionFactory = m_configuration.BuildSessionFactory();
+         _sessionFactory = _configuration.BuildSessionFactory();
       }
 
       [TestFixtureTearDown]
       public void TearDown()
       {
-         new SchemaExport(m_configuration).Execute(true, true, true);
+         new SchemaExport(_configuration).Execute(true, true, true);
       }
    }
 }

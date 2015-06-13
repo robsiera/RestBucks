@@ -18,20 +18,20 @@ namespace Test.Domain
       public void SetUp()
       {
          var mapper = new DtoMapper(new LinkProvider());
-         m_order = new Order();
-         m_order.Pay("123", "jose");
-         m_dto = mapper.Map<Order, OrderDto>(m_order);
+         _order = new Order();
+         _order.Pay("123", "jose");
+         _dto = mapper.Map<Order, OrderDto>(_order);
       }
 
       #endregion
 
-      private Order m_order;
-      private OrderDto m_dto;
+      private Order _order;
+      private OrderDto _dto;
 
       [Test]
       public void CancelShouldThrow()
       {
-         m_order.Executing(o => o.Cancel("error"))
+         _order.Executing(o => o.Cancel("error"))
             .Throws<InvalidOrderOperationException>()
             .And
             .Exception.Message.Should().Be.EqualTo("The order can not be canceled because it is paid.");
@@ -40,7 +40,7 @@ namespace Test.Domain
       [Test]
       public void PayShouldThrow()
       {
-         m_order.Executing(o => o.Pay("123", "jes"))
+         _order.Executing(o => o.Pay("123", "jes"))
             .Throws<InvalidOrderOperationException>()
             .And
             .Exception.Message.Should().Be.EqualTo("The order can not be paid because it is paid.");
@@ -49,7 +49,7 @@ namespace Test.Domain
       [Test]
       public void ThenNextStepsIncludeGet()
       {
-         m_dto.Links.Satisfy(a_links => a_links.Any(a_l => a_l.Uri == "http://restbuckson.net/order/0" && a_l.Relation.EndsWith("docs/order-get.htm")));
+         _dto.Links.Satisfy(links => links.Any(l => l.Uri == "http://restbuckson.net/order/0" && l.Relation.EndsWith("docs/order-get.htm")));
       }
    }
 }

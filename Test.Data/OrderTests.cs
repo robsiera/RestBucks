@@ -15,7 +15,7 @@ namespace Test.Data
         public void CanStoreAOrder()
         {
             long id;
-            using (var session = m_sessionFactory.OpenSession())
+            using (var session = _sessionFactory.OpenSession())
             using(var tx = session.BeginTransaction())
             {
                 var productRepository = new Repository<Product>(session);
@@ -52,14 +52,14 @@ namespace Test.Data
                 tx.Commit();
             }
 
-            using (var context = m_sessionFactory.OpenSession())
+            using (var context = _sessionFactory.OpenSession())
             {
                 var repository = new Repository<Order>(context);
                 var order = repository.GetById(id);
-                order.Satisfy(a_o => a_o.Location == Location.InShop
-                                && a_o.Items.Count() == 2
-                                && a_o.Items.Any(a_i => a_i.Preferences.ContainsKey("Shots"))
-                                && a_o.Items.Any(a_i => a_i.Preferences.ContainsKey("Milk") && a_i.Preferences.ContainsKey("Size")));
+                order.Satisfy(o => o.Location == Location.InShop
+                                && o.Items.Count() == 2
+                                && o.Items.Any(i => i.Preferences.ContainsKey("Shots"))
+                                && o.Items.Any(i => i.Preferences.ContainsKey("Milk") && i.Preferences.ContainsKey("Size")));
             }
         }
 
@@ -67,7 +67,7 @@ namespace Test.Data
         public void CanStoreAnOrderWithPayment()
         {
             long id;
-            using (var session = m_sessionFactory.OpenSession())
+            using (var session = _sessionFactory.OpenSession())
             using (var tx = session.BeginTransaction())
             {
                 var productRepository = new Repository<Product>(session);
@@ -96,13 +96,13 @@ namespace Test.Data
                 tx.Commit();
             }
 
-            using (var context = m_sessionFactory.OpenSession())
+            using (var context = _sessionFactory.OpenSession())
             {
                 var repository = new Repository<Order>(context);
                 var order = repository.GetById(id);
-                order.Satisfy(a_o => a_o.Location == Location.InShop
-                                && a_o.Items.Count() == 1
-                                && a_o.Payment != null);
+                order.Satisfy(o => o.Location == Location.InShop
+                                && o.Items.Count() == 1
+                                && o.Payment != null);
             }
         }
 
@@ -110,7 +110,7 @@ namespace Test.Data
         public void CanChangeStatus()
         {
             long id;
-            using (var session = m_sessionFactory.OpenSession())
+            using (var session = _sessionFactory.OpenSession())
             using (var tx = session.BeginTransaction())
             {
                 var productRepository = new Repository<Product>(session);
@@ -138,7 +138,7 @@ namespace Test.Data
                 id = order.Id;
                 tx.Commit();
             }
-            using (var session = m_sessionFactory.OpenSession())
+            using (var session = _sessionFactory.OpenSession())
             using (session.BeginTransaction())
             {
                 session.Get<Order>(id).Status.Should().Be.EqualTo(OrderStatus.Canceled);
@@ -151,7 +151,7 @@ namespace Test.Data
         {
             long id;
             int version;
-            using (var session = m_sessionFactory.OpenSession())
+            using (var session = _sessionFactory.OpenSession())
             using (var tx = session.BeginTransaction())
             {
                 var productRepository = new Repository<Product>(session);
@@ -181,7 +181,7 @@ namespace Test.Data
                 tx.Commit();
                 version = order.Version;
             }
-            using (var session = m_sessionFactory.OpenSession())
+            using (var session = _sessionFactory.OpenSession())
             using (var tx = session.BeginTransaction())
             {
                 var order = session.Get<Order>(id);

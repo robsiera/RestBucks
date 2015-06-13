@@ -13,22 +13,22 @@ namespace Test.Data
     [TestFixture, Ignore]
     public class DataInitializer
     {
-        private ISessionFactory m_sessionFactory;
+        private ISessionFactory _sessionFactory;
 
         [TestFixtureSetUp]
         public void SetUp()
         {
-            m_sessionFactory = Fluently.Configure()
-             .Database(MsSqlConfiguration.MsSql2008.ConnectionString(a_c => a_c.FromConnectionStringWithKey("Restbucks")))
-             .Mappings(a_m => a_m.FluentMappings.AddFromAssemblyOf<NHibernateModule>())
-             .ExposeConfiguration(a_c => new SchemaExport(a_c).Execute(true, true, false))
+            _sessionFactory = Fluently.Configure()
+             .Database(MsSqlConfiguration.MsSql2008.ConnectionString(c => c.FromConnectionStringWithKey("Restbucks")))
+             .Mappings(m => m.FluentMappings.AddFromAssemblyOf<NHibernateModule>())
+             .ExposeConfiguration(c => new SchemaExport(c).Execute(true, true, false))
              .BuildSessionFactory();
         }
 
         [Test, Ignore]
         public void InitializeData()
         {
-            using (var session = m_sessionFactory.OpenSession())
+            using (var session = _sessionFactory.OpenSession())
             using(var tx = session.BeginTransaction())
             {
 

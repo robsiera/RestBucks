@@ -13,27 +13,27 @@ namespace RestBucks.WebApi.Modules
 {
    public class ControllerResolver : IHttpControllerActivator
    {
-      private readonly IContainer m_container;
+      private readonly IContainer _container;
 
-      private static void RegisterRequestDependantResources(ContainerBuilder a_containerBuilder, HttpRequestMessage a_request)
+      private static void RegisterRequestDependantResources(ContainerBuilder containerBuilder, HttpRequestMessage request)
       {
-         a_containerBuilder.RegisterType<ResourceLinkProvider>().AsImplementedInterfaces();
-         a_containerBuilder.RegisterType<DtoMapper>().AsImplementedInterfaces();
-         a_containerBuilder.RegisterApiControllers(typeof(WebApiApplication).Assembly);
-         a_containerBuilder.RegisterInstance(new RouteLinker(a_request)).AsImplementedInterfaces();
+         containerBuilder.RegisterType<ResourceLinkProvider>().AsImplementedInterfaces();
+         containerBuilder.RegisterType<DtoMapper>().AsImplementedInterfaces();
+         containerBuilder.RegisterApiControllers(typeof(WebApiApplication).Assembly);
+         containerBuilder.RegisterInstance(new RouteLinker(request)).AsImplementedInterfaces();
       }
 
       /// <summary>
       /// Initializes a new instance of the <see cref="T:System.Object"/> class.
       /// </summary>
-      public ControllerResolver(IContainer a_container)
+      public ControllerResolver(IContainer container)
       {
-         if (a_container == null)
+         if (container == null)
          {
-            throw new ArgumentNullException("a_container");
+            throw new ArgumentNullException("container");
          }
 
-         m_container = a_container;
+         _container = container;
       }
 
       #region Implementation of IHttpControllerActivator
@@ -44,12 +44,12 @@ namespace RestBucks.WebApi.Modules
       /// <returns>
       /// An <see cref="T:System.Web.Http.Controllers.IHttpController"/> object.
       /// </returns>
-      /// <param name="a_request">The message request.</param><param name="a_controllerDescriptor">The HTTP controller descriptor.</param><param name="a_controllerType">The type of the controller.</param>
-      public IHttpController Create(HttpRequestMessage a_request, HttpControllerDescriptor a_controllerDescriptor, Type a_controllerType)
+      /// <param name="request">The message request.</param><param name="controllerDescriptor">The HTTP controller descriptor.</param><param name="controllerType">The type of the controller.</param>
+      public IHttpController Create(HttpRequestMessage request, HttpControllerDescriptor controllerDescriptor, Type controllerType)
       {
-         var scope = m_container.BeginLifetimeScope(a_x => RegisterRequestDependantResources(a_x, a_request));
-         var controller = (IHttpController)scope.ResolveOptional(a_controllerType);
-         a_request.RegisterForDispose(scope);
+         var scope = _container.BeginLifetimeScope(x => RegisterRequestDependantResources(x, request));
+         var controller = (IHttpController)scope.ResolveOptional(controllerType);
+         request.RegisterForDispose(scope);
          return controller;
       }
 
