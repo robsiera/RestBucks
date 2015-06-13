@@ -30,7 +30,7 @@ namespace Infrastructure.Persistance
       {
          foreach (T entity in entities)
          {
-            CurrentSession.Save(entity);
+            CurrentSession.Save(entity);  //todo RS: te bespreken met Sacha (seesion ipv context)
          }
       }
 
